@@ -2,7 +2,7 @@
 
 ## توضیحات
 در این تمرین سعی شده درجه سختی از ساده به دشوار باشه.
-همچنین درصورتی که به فایل doc این تمرین نیاز داشتید میتونید از [اینجا](https://github.com/hamsaco/Embedded-C-Questions/tree/main/Questions/quiz-1/readme.rtl.docx) اقدام به دانود فایل کنید.
+همچنین درصورتی که به فایل doc این تمرین نیاز داشتید میتونید از [اینجا](https://github.com/hamsaco/Embedded-C-Questions/raw/main/Questions/quiz-1/readme.rtl.docx) اقدام به دانود فایل کنید.
 
 ### مرحله 1
 تابعی بنویسید که دو عدد در ورودی دریافت کرده و حاصل جمع آن دو عدد را به خروجی برگرداند .
