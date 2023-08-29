@@ -13,9 +13,9 @@
 5. [توابع (Functions)](./Questions/Functions.md)
 6. [اشاره گر ها (Pointers)](./Questions/Pointers.md)
 7. [ساختمان ها (Structures)](./Questions/Structures.md)
-8. [اتحاد ها (Unions)](./Questions/Unions.md)
-9. [اشاره گر به توابع (Function Pointers)](./Questions/Function-Pointers.md)
-10. [پیش پردازنده ها (Pre-processors)](./Questions/Preprocessors.md)
+8. [اتحاد ها (Unions)](TODO)
+9. [اشاره گر به توابع (Function Pointers)](./Questions/FunctionPointer.docx)
+10. [پیش پردازنده ها (Pre-processors)](TODO)
 11. [سایر](./Questions/Misc.md)
 
 *توجه داشته باشید که برای حل سوالات انتهایی هر بخش عموما نیاز به استفاده از مطالب چندین سرفصل می باشد*
