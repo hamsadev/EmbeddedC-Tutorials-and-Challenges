@@ -1,0 +1,169 @@
+<div dir="rtl">
+
+# الگوی طراحی Callback در سیستم‌های نهفته
+
+این README به شما کمک می‌کند تا با الگوی طراحی Callback در سیستم‌های نهفته آشنا شوید. همچنین شامل تمرین‌هایی از ساده تا پیچیده برای تقویت مهارت‌های شما در این زمینه است.
+
+## سناریو: مدیریت داده‌های سنسور در سیستم تهویه مطبوع هوشمند
+
+فرض کنید در حال طراحی یک سیستم تهویه مطبوع هوشمند برای یک ساختمان هستید. این سیستم باید بتواند داده‌های مختلفی را از سنسورها (مانند دما، رطوبت و کیفیت هوا) بگیرد و بر اساس آن‌ها تهویه را کنترل کند. به عنوان مثال، وقتی دما بالا می‌رود، تهویه باید سریع‌تر کار کند تا محیط خنک شود.
+
+### پیاده‌سازی بدون استفاده از Callback
+
+ابتدا مسئله را بدون استفاده از الگوی طراحی Callback پیاده‌سازی می‌کنیم. در این روش، همه چیز درون یک ماژول متمرکز قرار دارد و تصمیم‌گیری‌ها مستقیماً در کد نوشته می‌شوند.
+
+#### 1. تعریف ساختار مدیریت سنسور
+
+```c
+// sensor_manager.h
+#ifndef SENSOR_MANAGER_H
+#define SENSOR_MANAGER_H
+
+typedef struct {
+    int sensor_id;
+    float current_temperature;
+    float threshold;
+} SensorManager;
+
+void init_sensor_manager(SensorManager* manager, int sensor_id, float threshold);
+void check_temperature(SensorManager* manager);
+
+#endif
+```
+
+#### 2. پیاده‌سازی ماژول مدیریت سنسور
+
+```c
+// sensor_manager.c
+#include "sensor_manager.h"
+#include <stdio.h>
+
+void init_sensor_manager(SensorManager* manager, int sensor_id, float threshold) {
+    manager->sensor_id = sensor_id;
+    manager->threshold = threshold;
+}
+
+void check_temperature(SensorManager* manager) {
+    // فرض کنید این تابع دما را از سنسور می‌خواند
+    manager->current_temperature = read_sensor(manager->sensor_id);
+
+    if (manager->current_temperature > manager->threshold) {
+        printf("Warning: Temperature is too high! Taking action...
+");
+        // اینجا مثلاً فن را روشن می‌کنیم یا هر اقدام دیگری که لازم است
+    }
+}
+```
+
+#### 3. استفاده از ماژول در برنامه اصلی
+
+```c
+// main.c
+#include "sensor_manager.h"
+
+int main(void) {
+    SensorManager temperature_manager;
+    init_sensor_manager(&temperature_manager, 1, 30.0);
+
+    while (1) {
+        check_temperature(&temperature_manager);
+        delay(1000); // تأخیر برای کنترل سرعت حلقه
+    }
+
+    return 0;
+}
+```
+
+### مشکلات روش بدون Callback
+
+- **وابستگی مستقیم:** برای تغییر رفتار سیستم، باید مستقیماً در کد اصلی تغییرات ایجاد کنیم.
+- **قابلیت گسترش محدود:** افزودن سنسورهای جدید یا تغییر رفتار سنسورهای فعلی نیاز به تغییرات گسترده‌ای در کد دارد.
+- **نگهداری سخت:** تغییرات مکرر باعث پیچیدگی و سختی در نگهداری کد می‌شود.
+
+## استفاده از الگوی طراحی Callback
+
+با استفاده از الگوی طراحی Callback، می‌توانیم کد را انعطاف‌پذیرتر و قابل گسترش‌تر کنیم.
+
+### پیاده‌سازی ماژول مدیریت سنسور با پشتیبانی از Callback
+
+```c
+// sensor_manager.h
+#ifndef SENSOR_MANAGER_H
+#define SENSOR_MANAGER_H
+
+typedef void (*TemperatureCallback)(float current_temperature);
+
+typedef struct {
+    int sensor_id;
+    float threshold;
+    TemperatureCallback on_threshold_exceed;
+} SensorManager;
+
+void init_sensor_manager(SensorManager* manager, int sensor_id, float threshold);
+void set_temperature_callback(SensorManager* manager, TemperatureCallback callback);
+void check_temperature(SensorManager* manager);
+
+#endif
+```
+
+### پیاده‌سازی ماژول مدیریت سنسور
+
+```c
+// sensor_manager.c
+#include "sensor_manager.h"
+#include <stdio.h>
+
+void init_sensor_manager(SensorManager* manager, int sensor_id, float threshold) {
+    manager->sensor_id = sensor_id;
+    manager->threshold = threshold;
+    manager->on_threshold_exceed = NULL;
+}
+
+void set_temperature_callback(SensorManager* manager, TemperatureCallback callback) {
+    manager->on_threshold_exceed = callback;
+}
+
+void check_temperature(SensorManager* manager) {
+    float current_temperature = read_sensor(manager->sensor_id);
+
+    if (current_temperature > manager->threshold && manager->on_threshold_exceed != NULL) {
+        manager->on_threshold_exceed(current_temperature);
+    }
+}
+```
+
+### پیاده‌سازی توابع Callback در برنامه اصلی
+
+```c
+// main.c
+#include "sensor_manager.h"
+#include <stdio.h>
+
+void handle_high_temperature(float current_temperature) {
+    printf("Warning: Temperature is %.2f! Taking action...
+", current_temperature);
+    // اقدام لازم، مثلاً روشن کردن فن
+}
+
+int main(void) {
+    SensorManager temperature_manager;
+    init_sensor_manager(&temperature_manager, 1, 30.0);
+
+    set_temperature_callback(&temperature_manager, handle_high_temperature);
+
+    while (1) {
+        check_temperature(&temperature_manager);
+        delay(1000); // تأخیر برای کنترل سرعت حلقه
+    }
+
+    return 0;
+}
+```
+
+### مزایای استفاده از Callback
+
+- **انعطاف‌پذیری بالا:** می‌توانیم به راحتی رفتار سیستم را تغییر دهیم، بدون نیاز به تغییر در کد اصلی.
+- **قابلیت گسترش آسان:** افزودن سنسورهای جدید تنها با تعریف یک `SensorManager` جدید و تنظیم Callback مناسب انجام می‌شود.
+- **کد مرتب‌تر و قابل نگهداری‌تر:** تصمیم‌گیری‌ها و واکنش‌ها به توابع جداگانه سپرده شده و مدیریت کد ساده‌تر می‌شود.
+
+</div>
