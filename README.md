@@ -15,7 +15,7 @@
 7. [ساختمان ها (Structures)](./Questions/Structures.md)
 8. [اتحاد ها (Unions)](TODO)
 9. [اشاره گر به توابع (Function Pointers)](./Questions/FunctionPointer.docx)
-10. [الگو های طراحی (Design Patterns)](./Questions/DesignPatterns.md)
+10. [الگو های طراحی (Design Patterns)](./Questions/DesignPatterns)
 11. [پیش پردازنده ها (Pre-processors)](TODO)
 12. [سایر](./Questions/Misc.md)
 
