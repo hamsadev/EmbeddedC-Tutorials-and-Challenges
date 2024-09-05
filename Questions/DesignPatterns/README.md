@@ -6,7 +6,7 @@
 
 ## فهرست مقالات
 
-1. [Singleton Design Pattern](./CallbackDesignPattern.md)
+1. [Singleton Design Pattern](./Singleton.md)
    - **توضیحات:** الگوی Singleton برای مدیریت یک نمونه واحد از یک کلاس یا ماژول در برنامه.
    - **تمرین‌ها:** شامل تمرین‌های پیاده‌سازی Singleton در محیط‌های ویندوزی و سیستم‌های نهفته.
 
