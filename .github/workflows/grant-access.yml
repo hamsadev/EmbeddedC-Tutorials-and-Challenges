@@ -1,29 +1,19 @@
 name: Grant Access to Private Repo
 
 on:
-  workflow_dispatch:
-    inputs:
-      username:
-        description: 'GitHub Username'
-        required: true
+  watch:
+    types: [started]
 
 jobs:
   check_star_and_grant_access:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if user has starred the repo
-        id: check_star
-        run: |
-          curl -s https://api.github.com/repos/hamsadev/EmbeddedC-Tutorials-and-Challenges/stargazers | grep ${{ github.event.inputs.username }} || exit 1
-
       - name: Add user to private repo
-        if: success()
         run: |
           curl -X PUT -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
           -H "Accept: application/vnd.github.v3+json" \
-          https://api.github.com/repos/hamsadev/EmbeddedC-Solutions/collaborators/${{ github.event.inputs.username }} \
+          https://api.github.com/repos/hamsadev/EmbeddedC-Solutions/collaborators/${{ github.event.sender.login }} \
           -d '{"permission":"pull"}'
 
       - name: Send confirmation
-        if: success()
-        run: echo "Access granted to private repository for user ${{ github.event.inputs.username }}."
+        run: echo "Access granted to private repository (EmbeddedC-Solutions) for user ${{ github.event.sender.login }}."
